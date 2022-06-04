@@ -5,9 +5,7 @@ import bibtexparser
 
 from datetime import datetime
 
-def covert(bibtex_str):
-    yaml_dict = bibtexparser.loads(bibtex_str).entries[0]
-
+def covert(yaml_dict):
     now = datetime.now()
     yaml_dict['date'] = now
 
@@ -38,16 +36,31 @@ def author_str_parse(author_str):
 
 if __name__ == '__main__':
 
-    for bib_file in os.listdir('my_bibs'):
+    with open(f'my_bib.bib') as bibtex_file:
+        bibtex_str = bibtex_file.read()
 
-        with open(f'my_bibs/{bib_file}') as bibtex_file:
-            bibtex_str = bibtex_file.read()
+    bib_parsed = bibtexparser.loads(bibtex_str)
 
-        yaml_name, yaml_list = covert(bibtex_str)
-
+    for bib_dict in bib_parsed.entries:
+        yaml_name, yaml_list = covert(bib_dict)
         # Skip if we already have this
         #if os.path.isfile(f'my_ymls/{yaml_name}.yml'):
         #    continue
 
         with open(f'my_ymls/{yaml_name}.yml', 'w') as f:
             yaml.dump(yaml_list, f, explicit_start=True, explicit_end=True)
+    
+
+#    for bib_file in os.listdir('my_bibs'):
+#
+#        with open(f'my_bibs/{bib_file}') as bibtex_file:
+#            bibtex_str = bibtex_file.read()
+#
+#        yaml_name, yaml_list = covert(bibtex_str)
+#
+#        # Skip if we already have this
+#        #if os.path.isfile(f'my_ymls/{yaml_name}.yml'):
+#        #    continue
+#
+#        with open(f'my_ymls/{yaml_name}.yml', 'w') as f:
+#            yaml.dump(yaml_list, f, explicit_start=True, explicit_end=True)
